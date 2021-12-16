@@ -1056,7 +1056,17 @@ public class ReferenceBuilder {
 					"Ignoring type parameters for problem binding: " + binding);
 		}
 
-		String simpleName = readableName.substring(Math.max(0, readableName.lastIndexOf('.') + 1));
+		// cut package name, assuming package names start with a lowercase letter
+		String n = readableName;
+		while (Character.isLowerCase(n.charAt(0))) {
+			int idx = n.indexOf('.');
+			if (idx < 0) {
+				break;
+			}
+			n = n.substring(idx + 1);
+		}
+
+		String simpleName = n;
 		CtTypeReference<?> ref = this.jdtTreeBuilder.getFactory().Core().createTypeReference();
 		ref.setSimpleName(simpleName);
 		final CtReference declaring = this.getDeclaringReferenceFromImports(binding.sourceName());
